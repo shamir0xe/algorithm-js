@@ -17,7 +17,7 @@ class AvlTree {
         this.cmp = cmpFunction;
     }
 
-    getSize = () => {
+    totalChildren = () => {
         if (this.root) return this.root.size;
         return 0;
     };
@@ -48,7 +48,7 @@ class AvlTree {
         return this.getHeight(node.left) - this.getHeight(node.right);
     };
 
-    rotateRight = (y) => {
+    _rotateRight = (y) => {
         // console.log('before right rotation');
         // let array = [];
         // this.inOrder(y, array);
@@ -75,7 +75,7 @@ class AvlTree {
         return x;
     };
 
-    rotateLeft = (x) => {
+    _rotateLeft = (x) => {
         // console.log('before left rotation');
         // let array = [];
         // this.inOrder(x, array);
@@ -132,7 +132,7 @@ class AvlTree {
             if (right) right.par = node;
             node.right = right;
         }
-        return this.relax(node);
+        return this._relax(node);
     };
 
     /**
@@ -159,7 +159,7 @@ class AvlTree {
         if (compare > 0) return this.find(value, node.right);
     };
 
-    relax = (node) => {
+    _relax = (node) => {
         if (!node) return null;
         node.size = this.getSize(node.left) + this.getSize(node.right) + 1;
         node.height = Math.max(this.getHeight(node.left), this.getHeight(node.right)) + 1;
@@ -168,42 +168,42 @@ class AvlTree {
         let balance = this.getBalance(node);
         if (balance > 1) {
             if (this.getHeight(node.left.left) > this.getHeight(node.left.right)) {
-                return this.rotateRight(node);
+                return this._rotateRight(node);
             } else {
-                node.left = this.rotateLeft(node.left);
-                return this.rotateRight(node);
+                node.left = this._rotateLeft(node.left);
+                return this._rotateRight(node);
             }
 
             // if (this.cmp(node.left.getValue(), insertedKey) > 0) {
-            //     return this.rotateRight(node);
+            //     return this._rotateRight(node);
             // } else {
-            //     node.left = this.rotateLeft(node.left);
-            //     return this.rotateRight(node);
+            //     node.left = this._rotateLeft(node.left);
+            //     return this._rotateRight(node);
             // }
         } else if (balance < -1) {
             if (this.getHeight(node.right.right) > this.getHeight(node.right.left)) {
-                return this.rotateLeft(node);
+                return this._rotateLeft(node);
             } else {
-                node.right = this.rotateRight(node.right);
-                return this.rotateLeft(node);
+                node.right = this._rotateRight(node.right);
+                return this._rotateLeft(node);
             }
             // if (this.cmp(insertedKey, node.right.getValue()) > 0) {
-            //     return this.rotateLeft(node);
+            //     return this._rotateLeft(node);
             // } else {
-            //     node.right = this.rotateRight(node.right);
-            //     return this.rotateLeft(node);
+            //     node.right = this._rotateRight(node.right);
+            //     return this._rotateLeft(node);
             // }
         }
         return node;
     };
 
-    add = (cur, node) => {
+    _add = (cur, node) => {
         if(this.cmp(node.getValue(), cur.getValue()) < 0) {
             if(!cur.left) {
                 cur.left = node;
                 node.par = cur;
             } else {
-                let left = this.add(cur.left, node);
+                let left = this._add(cur.left, node);
                 left.par = cur;
                 cur.left = left;
             }
@@ -212,18 +212,18 @@ class AvlTree {
                 cur.right = node;
                 node.par = cur;
             } else {
-                let right = this.add(cur.right, node);
+                let right = this._add(cur.right, node);
                 right.par = cur;
                 cur.right = right;
             }
         }
-        // return this.relax(cur, node.getValue());
-        return this.relax(cur);
+        // return this._relax(cur, node.getValue());
+        return this._relax(cur);
     };
 
     insert = (value) => {
         if (this.root.getValue() === null) this.root.setValue(value);
-        else this.root = this.add(this.root, new Node(value));
+        else this.root = this._add(this.root, new Node(value));
     };
 
     toString = () => {
@@ -280,7 +280,7 @@ class AvlTree {
             }
             ret = right;
         }
-        this.relax(ret);
+        this._relax(ret);
         ret.par = null;
         return ret;
     };
@@ -311,7 +311,7 @@ class AvlTree {
         else {
             ret = this.pollInd(ind - szLeft - 1, cur.right);
         }
-        this.relax(cur);
+        this._relax(cur);
         return ret;
     };
 

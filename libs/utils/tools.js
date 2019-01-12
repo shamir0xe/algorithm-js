@@ -83,7 +83,6 @@ class StringRandomGenerator {
         for (let i = 0; i < count; i++)
             text += possible.charAt(Math.floor(Math.random() * possible.length));
 
-        // console.log('random:' + text);
         return text;
     }
 }
@@ -133,42 +132,73 @@ class Queue {
 }
 
 class NestedPrinter {
-    addTabs = (level) => {
+    _addTabs = (level) => {
         for (let i = 0; i < level; ++i) {
             this.buffer += '=';
         }
     };
-    addToBuffer = (str) => {
+
+    _addToBuffer = (str) => {
         str = str.toString();
         this.buffer += str;
     };
-    flushBuffer = () => {
+
+    _flushBuffer = () => {
         console.log(this.buffer);
         this.buffer = "";
     };
+
     print = (object, level = 1) => {
-        if (level > 10) return;
+        if (this.limit > 5) return;
         // console.log('++' + typeof (object));
         if (typeof (object) === "string" || typeof (object) === "boolean" || typeof (object) === "number" || typeof (object) === "undefined") {
-            this.addTabs(level);
-            this.addToBuffer(' ' + object);
-            this.flushBuffer();
+            this._addTabs(level);
+            this._addToBuffer(' ' + object);
+            this._flushBuffer();
             return;
         }
         for (let key in object) {
-            this.addTabs(level);
-            this.addToBuffer(' [' + key + ']');
-            this.flushBuffer();
+            this._addTabs(level);
+            this._addToBuffer(' [' + key + ']');
+            this._flushBuffer();
             this.print(object[key], level + 1);
         }
     };
 
-    constructor() {
+    _toString = (object, level = 1) => {
+        if (this.limit > 5) return;
+        // console.log('++' + typeof (object));
+        if (typeof (object) === "string" || typeof (object) === "boolean" || typeof (object) === "number" || typeof (object) === "undefined") {
+            this._addTabs(level);
+            this._addToBuffer(' ' + object);
+            this.buffer += "\n";
+            // this._flushBuffer();
+            return;
+        }
+        for (let key in object) {
+            this._addTabs(level);
+            this._addToBuffer(' [' + key + ']');
+            this.buffer += "\n";
+            // this._flushBuffer();
+            this._toString(object[key], level + 1);
+        }
+    };
+
+    toString = (object) => {
+        this.buffer = "\n";
+        this._toString(object);
+        return this.buffer;
+    };
+
+    constructor(obj) {
+        let {
+            limit = 5
+        } = obj;
+        this.limit = limit;
         this.buffer = "";
         console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
     };
 }
-
 
 module.exports = {
     StopWatch,

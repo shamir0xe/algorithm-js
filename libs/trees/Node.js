@@ -24,7 +24,7 @@ class Node {
     toString = () => {
         return {
             value: this.val,
-            parent: this.par ? this.par.getValue() : "NOPE",
+            parent: this.par ? this.par.getValue() : "NONE",
             size: this.size,
             height: this.height,
             hash: this.hash
